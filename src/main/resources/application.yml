@@ -1,0 +1,32 @@
+spring:
+  application:
+    name:                      demo2
+  jpa:
+    properties:
+      hibernate.dialect.storage_engine: innodb
+    hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: tttx
+  redis:
+    host: localhost
+    password: tttx
+    database: 0
+
+logging:
+  level:
+    root:                      INFO
+    org.hibernate.SQL:         INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+properties:
+  dt:
+    secret-key: ${DT_SECRET_KEY:123}
+    page-info-url: ${DT_PAGE_INFO_URL:http://localhost:8080/v1/publish/basepage}
+    page-proof-url: ${DT_PAGE_PROOF_URL:http://localhost:8080/v1/page/proof}
+    send-story-url: ${DT_SEND_STORY_URL:http://localhost:9090/v1/publish/sendstory}
+    withdraw-story-url: ${DT_WITHDRAW_STORY_URL:http://localhost:9090/v1/publish/storywithdraw}
+    image-preview-url: ${DT_IMAGE_PREVIEW_URL:http://localhost:9090/file/preview}
