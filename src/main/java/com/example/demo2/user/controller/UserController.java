@@ -4,6 +4,7 @@ import com.example.demo2.user.dto.TokenDTO;
 import com.example.demo2.user.dto.UserDTO;
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
+import com.example.demo2.user.service.TestTx;
 import com.example.demo2.user.service.UserService;
 import com.example.demo2.util.DateTimeUtil;
 import com.example.demo2.util.JsonUtil;
@@ -82,11 +83,6 @@ public class UserController {
         userService.tx();
     }
 
-    @GetMapping("/tx2")
-    public void tx2() {
-        userService.tx2();
-    }
-
     @GetMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserXmlModel json() {
         UserXmlModel user = new UserXmlModel(1, "测试json", 15, "男");
@@ -126,5 +122,13 @@ public class UserController {
     @PostMapping("/test3")
     public void test3(@Valid  @RequestBody List<UserDTO> users) {
         System.out.println(JsonUtil.bean2Json(users));
+    }
+
+    @Autowired
+    private TestTx testTx;
+
+    @GetMapping("/multi-tx")
+    public void testMultiTx() throws InterruptedException {
+        testTx.test();
     }
 }

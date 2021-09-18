@@ -23,5 +23,7 @@ public interface UserService {
 
     void tx();
 
-    void tx2();
+    void test(int id);
+
+    void multiTx();
 }

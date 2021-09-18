@@ -2,6 +2,7 @@ package com.example.demo2.user.service.impl;
 
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
+import com.example.demo2.user.service.AtomicConcurrentTransactionalExecutor;
 import com.example.demo2.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +14,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * kevin<br/>
@@ -109,54 +107,29 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+    @Autowired
+    private AtomicConcurrentTransactionalExecutor atomicConcurrentTransactionalExecutor;
+
     @Override
-    public void tx2() {
+    public void multiTx() {
+        atomicConcurrentTransactionalExecutor.execute(getRunnable());
+    }
+
+    private List<Runnable> getRunnable() {
+        List<Runnable> result = new ArrayList<>();
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        list.forEach(id -> result.add(new Thread(() -> test(id))));
+        return result;
+    }
 
-        int threads = 3;
-        ExecutorService executorService = Executors.newFixedThreadPool(threads);
+    @Override
+    public void test(int id) {
+        User user = userRepository.getOne(id);
+        user.setUname("tom");
+        userRepository.save(user);
 
-        int count = list.size();
-        CountDownLatch latch= new CountDownLatch(count);
-        AtomicReference<Boolean> isError = new AtomicReference<>(false);
-
-        list.forEach(id -> {
-            executorService.submit(() -> {
-                DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-                TransactionStatus status = transactionManager.getTransaction(def);
-                try {
-                    User user = userRepository.getOne(id);
-                    user.setUname("tom");
-                    userRepository.save(user);
-
-                    if (id == 2) {
-                        throw new RuntimeException();
-                    }
-                } catch (Exception ex) {
-                    logger.error(ex.getMessage(), ex);
-                    isError.set(true);
-                }
-
-                latch.countDown();
-
-                try {
-                    latch.await();
-                    if (isError.get()) {
-                        transactionManager.rollback(status);
-                    } else {
-                        transactionManager.commit(status);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (id == 4) {
+            throw new RuntimeException();
         }
     }
 }
