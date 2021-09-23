@@ -11,8 +11,6 @@ import java.util.List;
  */
 public interface UserService {
 
-    public void test() throws InterruptedException;
-
     List<User> findAll(Integer age);
 
     void add(LocalDateTime regtime);
@@ -22,8 +20,4 @@ public interface UserService {
     void update2(int id);
 
     void tx();
-
-    void test(int id);
-
-    void multiTx();
 }

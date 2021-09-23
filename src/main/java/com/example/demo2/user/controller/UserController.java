@@ -1,11 +1,11 @@
 package com.example.demo2.user.controller;
 
 import com.example.demo2.user.concurrent.AtomicMultiThreadTxExecutor;
+import com.example.demo2.user.controller.queryobject.TxQueryObject;
 import com.example.demo2.user.dto.TokenDTO;
 import com.example.demo2.user.dto.UserDTO;
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
-import com.example.demo2.user.service.TestTx;
 import com.example.demo2.user.service.UserService;
 import com.example.demo2.user.service.impl.UserService4Impl;
 import com.example.demo2.util.DateTimeUtil;
@@ -127,14 +127,6 @@ public class UserController {
         System.out.println(JsonUtil.bean2Json(users));
     }
 
-    @Autowired
-    private TestTx testTx;
-
-    @GetMapping("/multi-tx")
-    public void testMultiTx() throws InterruptedException {
-        testTx.test();
-    }
-
     @GetMapping("/test23")
     public void test23() {
         new Thread(() -> {
@@ -159,9 +151,9 @@ public class UserController {
 
     @GetMapping("/atomic-mutli-tx")
     public void testAtomicMultiTx() {
-        List<MyTask> list = new ArrayList<>();
+        List<TxQueryObject> list = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            list.add(new MyTask("100" + (i + 1), i + 1));
+            list.add(new TxQueryObject(i + 1));
         }
 
         atomicMultiThreadTxExecutor.execute(list, userService4);

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * kevin<br/>
  * 2021/9/22 10:42<br/>
  */
-public class TxWorker<T extends TxTask> implements Runnable {
+public class TxWorker<T> implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -43,11 +43,11 @@ public class TxWorker<T extends TxTask> implements Runnable {
      */
     private TxService<T> txService;
     /**
-     * 供<see>{@link TxService#invoke(TxTask)}</see>使用
+     * 供<see>{@link TxService#invoke(T)}</see>使用
      */
     private List<T> txTasks;
     /**
-     * 收集<see>{@link TxService#invoke(TxTask)}</see>的结果
+     * 收集<see>{@link TxService#invoke(T)}</see>的结果
      */
     private BlockingDeque<TxResult> txResults;
 

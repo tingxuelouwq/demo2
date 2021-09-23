@@ -1,17 +1,14 @@
-package com.example.demo2.user.controller;
-
-import com.example.demo2.user.concurrent.TxTask;
+package com.example.demo2.user.controller.queryobject;
 
 /**
  * kevin<br/>
  * 2021/9/22 15:03<br/>
  */
-public class MyTask extends TxTask {
+public class TxQueryObject {
 
     private int id;
 
-    public MyTask(String docId, int id) {
-        super(docId);
+    public TxQueryObject(int id) {
         this.id = id;
     }
 

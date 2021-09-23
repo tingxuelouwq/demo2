@@ -1,5 +1,6 @@
 package com.example.demo2.user.concurrent;
 
+import com.example.demo2.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * kevin<br/>
  * 2021/9/22 10:07<br/>
- * 原子性多线程事务执行器
+ * 原子性多线程事务执行器，使用方法：
+ * Service层接口实现类要实现<see>{@link TxService}</see>并实现
+ * <see>{@link TxService#invoke(Object)}方法</see>，响应结果可以继承
+ * <see>{@link TxResult}</see>类
  */
 @Component
 public class AtomicMultiThreadTxExecutor {
@@ -26,11 +30,11 @@ public class AtomicMultiThreadTxExecutor {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    public <T extends TxTask> List<TxResult> execute(List<T> tasks, TxService<T> txService) {
+    public <T> List<TxResult> execute(List<T> tasks, TxService<T> txService) {
         return execute(tasks, txService, defaultThreadSize);
     }
 
-    public <T extends TxTask> List<TxResult> execute(List<T> tasks, TxService<T> txService, int nThreads) {
+    public <T> List<TxResult> execute(List<T> tasks, TxService<T> txService, int nThreads) {
         int nTasks = tasks.size();
         int nTasksPerThread = 1;    // 每个线程需要执行多少个任务
         if (nTasks > nThreads * nTasksPerThread) {
@@ -69,7 +73,7 @@ public class AtomicMultiThreadTxExecutor {
             for (int i = 0; i < nTasks; i++) {
                 TxResult txResult = txResults.take();
                 if (txResult.isError()) {
-                    logger.error("子线程中业务执行存在异常，整体回滚，docId: {}, message: {}", txResult.getDocId(), txResult.getMessage());
+                    logger.error("子线程中业务执行存在异常，整体回滚，txResult: {}", JsonUtil.bean2Json(txResult));
                     rollbackFlag.set(true);
                     failures.add(txResult);
                 }

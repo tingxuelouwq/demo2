@@ -2,7 +2,6 @@ package com.example.demo2.user.service.impl;
 
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
-import com.example.demo2.user.service.AtomicConcurrentTransactionalExecutor;
 import com.example.demo2.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,21 +26,7 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private AsyncTask asyncTask;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private User3ServiceImpl user3Service;
-
-    @Override
-    public void test() throws InterruptedException {
-        asyncTask.archive();
-        logger.info("休眠3s");
-        Thread.sleep(3000);
-        logger.info("test方法结束");
-    }
 
     @Override
     public List<User> findAll(Integer age) {
@@ -105,31 +89,5 @@ public class UserServiceImpl implements UserService {
                 transactionManager.rollback(status);
             }
         });
-    }
-
-    @Autowired
-    private AtomicConcurrentTransactionalExecutor atomicConcurrentTransactionalExecutor;
-
-    @Override
-    public void multiTx() {
-        atomicConcurrentTransactionalExecutor.execute(getRunnable());
-    }
-
-    private List<Runnable> getRunnable() {
-        List<Runnable> result = new ArrayList<>();
-        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        list.forEach(id -> result.add(new Thread(() -> test(id))));
-        return result;
-    }
-
-    @Override
-    public void test(int id) {
-        User user = userRepository.getOne(id);
-        user.setUname("tom");
-        userRepository.save(user);
-
-        if (id == 4) {
-//            throw new RuntimeException();
-        }
     }
 }
