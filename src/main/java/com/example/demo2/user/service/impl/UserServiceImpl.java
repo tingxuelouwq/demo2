@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         if (id == 4) {
-            throw new RuntimeException();
+//            throw new RuntimeException();
         }
     }
 }

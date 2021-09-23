@@ -1,11 +1,13 @@
 package com.example.demo2.user.controller;
 
+import com.example.demo2.user.concurrent.AtomicMultiThreadTxExecutor;
 import com.example.demo2.user.dto.TokenDTO;
 import com.example.demo2.user.dto.UserDTO;
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
 import com.example.demo2.user.service.TestTx;
 import com.example.demo2.user.service.UserService;
+import com.example.demo2.user.service.impl.UserService4Impl;
 import com.example.demo2.util.DateTimeUtil;
 import com.example.demo2.util.JsonUtil;
 import com.example.demo2.util.RedisUtil;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -130,5 +133,37 @@ public class UserController {
     @GetMapping("/multi-tx")
     public void testMultiTx() throws InterruptedException {
         testTx.test();
+    }
+
+    @GetMapping("/test23")
+    public void test23() {
+        new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                System.out.println("hello world");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        System.out.println("主线程结束");
+    }
+
+    @Autowired
+    private AtomicMultiThreadTxExecutor atomicMultiThreadTxExecutor;
+
+    @Autowired
+    private UserService4Impl userService4;
+
+    @GetMapping("/atomic-mutli-tx")
+    public void testAtomicMultiTx() {
+        List<MyTask> list = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            list.add(new MyTask("100" + (i + 1), i + 1));
+        }
+
+        atomicMultiThreadTxExecutor.execute(list, userService4);
     }
 }
