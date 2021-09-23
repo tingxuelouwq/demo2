@@ -30,11 +30,11 @@ public class AtomicMultiThreadTxExecutor<T> {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    public List<TxResult> execute(List<T> tasks, TxService<T> txService) {
+    public TxResults execute(List<T> tasks, TxService<T> txService) {
         return execute(tasks, txService, defaultThreadSize);
     }
 
-    public List<TxResult> execute(List<T> tasks, TxService<T> txService, int nThreads) {
+    public TxResults execute(List<T> tasks, TxService<T> txService, int nThreads) {
         int nTasks = tasks.size();
         int nTasksPerThread = 1;    // 每个线程需要执行多少个任务
         if (nTasks > nThreads * nTasksPerThread) {
@@ -49,6 +49,7 @@ public class AtomicMultiThreadTxExecutor<T> {
         AtomicBoolean rollbackFlag = new AtomicBoolean(false);
         BlockingDeque<TxResult> txResults = new LinkedBlockingDeque<>();
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
+        List<TxResult> successes = new ArrayList<>();
         List<TxResult> failures = new ArrayList<>();
 
         for (int i = 0; i < nThreads; i++) {
@@ -76,6 +77,8 @@ public class AtomicMultiThreadTxExecutor<T> {
                     logger.error("子线程中业务执行存在异常，整体回滚，txResult: {}", JsonUtil.bean2Json(txResult));
                     rollbackFlag.set(true);
                     failures.add(txResult);
+                } else {
+                    successes.add(txResult);
                 }
             }
         } catch (InterruptedException e) {
@@ -86,6 +89,7 @@ public class AtomicMultiThreadTxExecutor<T> {
             executorService.shutdown();
             logger.info("原子性多线程事务结束，关闭线程池释放资源, hasShutdown=" + executorService.isShutdown());
         }
-        return failures;
+
+        return new TxResults(successes, failures);
     }
 }

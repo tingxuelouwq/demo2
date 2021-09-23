@@ -1,8 +1,8 @@
 package com.example.demo2.user.service.impl;
 
+import com.example.demo2.user.concurrent.TxResult;
 import com.example.demo2.user.concurrent.TxService;
 import com.example.demo2.user.controller.queryobject.TxQueryObject;
-import com.example.demo2.user.dto.UserTxResult;
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,12 @@ public class UserService4Impl implements TxService<TxQueryObject> {
     private UserRepository userRepository;
 
     @Override
-    public UserTxResult invoke(TxQueryObject txQueryObject) {
+    public TxResult invoke(TxQueryObject txQueryObject) {
         int id = txQueryObject.getId();
 
-        UserTxResult txResult = new UserTxResult();
+        TxResult txResult = new TxResult();
         txResult.setError(false);
-        txResult.setId(id);
+        txResult.setId(id + "");
 
         User user = userRepository.getOne(id);
         user.setUname("tom");
