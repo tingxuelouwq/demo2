@@ -33,6 +33,7 @@ public class UserService4Impl implements TxService<TxQueryObject> {
         if (id == 4 || id == 5) {
             txResult.setMessage(id + " error happened");
             txResult.setError(true);
+            throw new RuntimeException(txResult.getMessage());
         }
         return txResult;
     }

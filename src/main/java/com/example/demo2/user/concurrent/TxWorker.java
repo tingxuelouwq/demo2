@@ -1,5 +1,6 @@
 package com.example.demo2.user.concurrent;
 
+import com.example.demo2.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -57,7 +58,19 @@ public class TxWorker<T> implements Runnable {
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         TransactionStatus status = transactionManager.getTransaction(def);
 
-        txTasks.forEach(txTask -> txResults.add(txService.invoke(txTask)));
+        txTasks.forEach(txTask -> {
+            TxResult txResult = null;
+            try {
+                txResult = txService.invoke(txTask);
+            } catch (Exception ex) {
+                logger.error("子线程业务执行异常, txTask: {}", JsonUtil.bean2Json(txTask), ex);
+                txResult = new TxResult();
+                txResult.setError(true);
+                txResult.setMessage(ex.getMessage());
+            } finally {
+                txResults.add(txResult);
+            }
+        });
 
         mainThreadLatch.countDown();
 
