@@ -144,7 +144,7 @@ public class UserController {
     }
 
     @Autowired
-    private AtomicMultiThreadTxExecutor atomicMultiThreadTxExecutor;
+    private AtomicMultiThreadTxExecutor<TxQueryObject> atomicMultiThreadTxExecutor;
 
     @Autowired
     private UserService4Impl userService4;
