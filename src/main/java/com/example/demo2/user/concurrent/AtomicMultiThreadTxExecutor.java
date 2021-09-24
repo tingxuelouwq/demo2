@@ -16,9 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * kevin<br/>
  * 2021/9/22 10:07<br/>
  * 原子性多线程事务执行器，使用方法：
- * Service层接口实现类要实现<see>{@link TxService}</see>并实现
+ * 1.Service层接口实现类要实现<see>{@link TxService}</see>并实现
  * <see>{@link TxService#invoke(T, Object...)}方法</see>，响应结果可以继承
  * <see>{@link TxResult}</see>类
+ * 2.任务视情况继承<see>{@link TxTask}</see>类
  */
 @Component
 public class AtomicMultiThreadTxExecutor<T> {
