@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2021/9/22 10:07<br/>
  * 原子性多线程事务执行器，使用方法：
  * Service层接口实现类要实现<see>{@link TxService}</see>并实现
- * <see>{@link TxService#invoke(T)}方法</see>，响应结果可以继承
+ * <see>{@link TxService#invoke(T, Object...)}方法</see>，响应结果可以继承
  * <see>{@link TxResult}</see>类
  */
 @Component
@@ -30,11 +30,11 @@ public class AtomicMultiThreadTxExecutor<T> {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    public TxResults execute(List<T> tasks, TxService<T> txService) {
-        return execute(tasks, txService, defaultThreadSize);
+    public <T> TxResults execute(TxService<T> txService, List<T> tasks, Object... extraArgs) {
+        return execute(defaultThreadSize, txService, tasks, extraArgs);
     }
 
-    public TxResults execute(List<T> tasks, TxService<T> txService, int nThreads) {
+    public <T> TxResults execute(int nThreads,TxService<T> txService, List<T> tasks, Object... extraArgs) {
         int nTasks = tasks.size();
         int nTasksPerThread = 1;    // 每个线程需要执行多少个任务
         if (nTasks > nThreads * nTasksPerThread) {
@@ -62,6 +62,7 @@ public class AtomicMultiThreadTxExecutor<T> {
             txWorker.setTransactionManager(transactionManager);
             txWorker.setTxService(txService);
             txWorker.setTxTasks(subTasks);
+            txWorker.setExtraArgs(extraArgs);
             txWorker.setTxResults(txResults);
             executorService.submit(txWorker);
         }

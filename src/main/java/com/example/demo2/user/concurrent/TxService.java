@@ -6,5 +6,5 @@ package com.example.demo2.user.concurrent;
  */
 public interface TxService<T> {
 
-    TxResult invoke(T t);
+    TxResult invoke(T t, Object... extraArgs);
 }

@@ -157,7 +157,7 @@ public class UserController {
             list.add(new TxQueryObject(i + 1));
         }
 
-        TxResults txResults = atomicMultiThreadTxExecutor.execute(list, userService4);
+        TxResults txResults = atomicMultiThreadTxExecutor.execute(userService4, list);
         logger.info("successes: " + JsonUtil.bean2Json(txResults.getSuccesses()));
         logger.info("failures: " + JsonUtil.bean2Json(txResults.getFailures()));
     }

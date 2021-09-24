@@ -44,11 +44,15 @@ public class TxWorker<T> implements Runnable {
      */
     private TxService<T> txService;
     /**
-     * 供<see>{@link TxService#invoke(T)}</see>使用
+     * 供<see>{@link TxService#invoke(T, Object...)}</see>使用
      */
     private List<T> txTasks;
     /**
-     * 收集<see>{@link TxService#invoke(T)}</see>的结果
+     * 额外的一些参数
+     */
+    private Object[] extraArgs;
+    /**
+     * 收集<see>{@link TxService#invoke(T, Object...)}</see>的结果
      */
     private BlockingDeque<TxResult> txResults;
 
@@ -61,7 +65,7 @@ public class TxWorker<T> implements Runnable {
         txTasks.forEach(txTask -> {
             TxResult txResult = null;
             try {
-                txResult = txService.invoke(txTask);
+                txResult = txService.invoke(txTask, extraArgs);
             } catch (Exception ex) {
                 logger.error("子线程业务执行异常, txTask: {}", JsonUtil.bean2Json(txTask), ex);
                 txResult = new TxResult();
@@ -110,6 +114,10 @@ public class TxWorker<T> implements Runnable {
 
     public void setTxTasks(List<T> txTasks) {
         this.txTasks = txTasks;
+    }
+
+    public void setExtraArgs(Object[] extraArgs) {
+        this.extraArgs = extraArgs;
     }
 
     public void setTxResults(BlockingDeque<TxResult> txResults) {

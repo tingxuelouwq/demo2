@@ -19,7 +19,7 @@ public class UserService4Impl implements TxService<TxQueryObject> {
     private UserRepository userRepository;
 
     @Override
-    public TxResult invoke(TxQueryObject txQueryObject) {
+    public TxResult invoke(TxQueryObject txQueryObject, Object... extraArgs) {
         int id = txQueryObject.getId();
 
         TxResult txResult = new TxResult();
