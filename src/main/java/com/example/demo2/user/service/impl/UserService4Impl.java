@@ -13,27 +13,27 @@ import org.springframework.stereotype.Service;
  * 2021/9/22 15:04<br/>
  */
 @Service
-public class UserService4Impl implements TxService<TxQueryObject> {
+public class UserService4Impl implements TxService<TxResult, TxQueryObject, Object> {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public TxResult invoke(TxQueryObject txQueryObject, Object... extraArgs) {
+    public TxResult invoke(TxQueryObject txQueryObject, Object args) {
         int id = txQueryObject.getId();
 
         TxResult txResult = new TxResult();
         txResult.setError(false);
-        txResult.setId(id + "");
+        txResult.setIndex(id);
 
         User user = userRepository.getOne(id);
         user.setUname("tom");
         userRepository.save(user);
 
         if (id == 4 || id == 5) {
-            txResult.setMessage(id + " error happened");
-            txResult.setError(true);
-            throw new RuntimeException(txResult.getMessage());
+//            txResult.setMessage(id + " error happened");
+//            txResult.setError(true);
+//            throw new RuntimeException(txResult.getMessage());
         }
         return txResult;
     }

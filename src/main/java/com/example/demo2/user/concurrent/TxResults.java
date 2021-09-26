@@ -9,22 +9,22 @@ import java.util.List;
  * 2021/9/23 18:27<br/>
  * 原子性多线程事务执行结果
  */
-public class TxResults {
+public class TxResults<R extends TxResult> {
 
     /**
      * 执行成功的结果集
      */
-    private List<TxResult> successes;
+    private List<R> successes;
     /**
      * 执行失败的结果集
      */
-    private List<TxResult> failures;
+    private List<R> failures;
     /**
      * 错误标识，若全部成功，则为true，否则为false
      */
     private boolean error;
 
-    public TxResults(List<TxResult> successes, List<TxResult> failures) {
+    public TxResults(List<R> successes, List<R> failures) {
         this.successes = successes;
         this.failures = failures;
 
@@ -35,19 +35,19 @@ public class TxResults {
         }
     }
 
-    public List<TxResult> getSuccesses() {
+    public List<R> getSuccesses() {
         return successes;
     }
 
-    public void setSuccesses(List<TxResult> successes) {
+    public void setSuccesses(List<R> successes) {
         this.successes = successes;
     }
 
-    public List<TxResult> getFailures() {
+    public List<R> getFailures() {
         return failures;
     }
 
-    public void setFailures(List<TxResult> failures) {
+    public void setFailures(List<R> failures) {
         this.failures = failures;
     }
 

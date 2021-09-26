@@ -7,15 +7,15 @@ package com.example.demo2.user.concurrent;
 public class TxTask {
 
     /**
-     * 任务的唯一标识符，用于事务成功或失败时，在响应中标记出对应的任务
+     * 任务序号，从0开始
      */
-    private Integer id;
+    private Integer index;
 
-    public Integer getId() {
-        return id;
+    public Integer getIndex() {
+        return index;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 }

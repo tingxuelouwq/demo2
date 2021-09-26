@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * kevin<br/>
  * 2021/9/22 10:42<br/>
  */
-public class TxWorker<T> implements Runnable {
+public class TxWorker<R extends TxResult, T extends TxTask, U> implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -42,20 +42,21 @@ public class TxWorker<T> implements Runnable {
     /**
      * 事务相关的业务层接口，具体的业务层接口需要实现该类
      */
-    private TxService<T> txService;
+    private TxService<R, T, U> txService;
     /**
-     * 供<see>{@link TxService#invoke(T, Object...)}</see>使用
+     * 任务列表，业务层接口执行任务时需要
      */
     private List<T> txTasks;
     /**
-     * 额外的一些参数
+     * 额外参数，业务层接口执行任务时需要
      */
-    private Object[] extraArgs;
+    private U extraArg;
     /**
-     * 收集<see>{@link TxService#invoke(T, Object...)}</see>的结果
+     * 执行任务后的结果队列
      */
-    private BlockingDeque<TxResult> txResults;
+    private BlockingDeque<R> txResults;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -63,17 +64,17 @@ public class TxWorker<T> implements Runnable {
         TransactionStatus status = transactionManager.getTransaction(def);
 
         txTasks.forEach(txTask -> {
-            TxResult txResult = null;
+            R txResult;
             try {
-                txResult = txService.invoke(txTask, extraArgs);
+                txResult = txService.invoke(txTask, extraArg);
             } catch (Exception ex) {
                 logger.error("子线程业务执行异常, txTask: {}", JsonUtil.bean2Json(txTask), ex);
-                txResult = new TxResult();
+                txResult = (R) new TxResult();
+                txResult.setIndex(txTask.getIndex());
                 txResult.setError(true);
                 txResult.setMessage(ex.getMessage());
-            } finally {
-                txResults.add(txResult);
             }
+            txResults.add(txResult);
         });
 
         mainThreadLatch.countDown();
@@ -108,7 +109,7 @@ public class TxWorker<T> implements Runnable {
         this.transactionManager = transactionManager;
     }
 
-    public void setTxService(TxService<T> txService) {
+    public void setTxService(TxService txService) {
         this.txService = txService;
     }
 
@@ -116,11 +117,11 @@ public class TxWorker<T> implements Runnable {
         this.txTasks = txTasks;
     }
 
-    public void setExtraArgs(Object[] extraArgs) {
-        this.extraArgs = extraArgs;
+    public void setExtraArg(U extraArg) {
+        this.extraArg = extraArg;
     }
 
-    public void setTxResults(BlockingDeque<TxResult> txResults) {
+    public void setTxResults(BlockingDeque<R> txResults) {
         this.txResults = txResults;
     }
 }

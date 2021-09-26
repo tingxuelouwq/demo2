@@ -1,10 +1,12 @@
 package com.example.demo2.user.controller.queryobject;
 
+import com.example.demo2.user.concurrent.TxTask;
+
 /**
  * kevin<br/>
  * 2021/9/22 15:03<br/>
  */
-public class TxQueryObject {
+public class TxQueryObject extends TxTask {
 
     private int id;
 

@@ -6,16 +6,25 @@ package com.example.demo2.user.concurrent;
  */
 public class TxResult {
 
-    private String id;
+    /**
+     * 结果索引，和任务索引一致
+     */
+    private Integer index;
+    /**
+     * 消息说明
+     */
     private String message;
+    /**
+     * 任务是否失败
+     */
     private boolean error;
 
-    public String getId() {
-        return id;
+    public Integer getIndex() {
+        return index;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public String getMessage() {

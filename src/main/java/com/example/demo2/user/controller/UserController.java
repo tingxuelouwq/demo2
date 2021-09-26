@@ -1,6 +1,7 @@
 package com.example.demo2.user.controller;
 
 import com.example.demo2.user.concurrent.AtomicMultiThreadTxExecutor;
+import com.example.demo2.user.concurrent.TxResult;
 import com.example.demo2.user.concurrent.TxResults;
 import com.example.demo2.user.controller.queryobject.TxQueryObject;
 import com.example.demo2.user.dto.TokenDTO;
@@ -145,7 +146,7 @@ public class UserController {
     }
 
     @Autowired
-    private AtomicMultiThreadTxExecutor<TxQueryObject> atomicMultiThreadTxExecutor;
+    private AtomicMultiThreadTxExecutor<TxResult, TxQueryObject, Object> atomicMultiThreadTxExecutor;
 
     @Autowired
     private UserService4Impl userService4;
@@ -157,7 +158,7 @@ public class UserController {
             list.add(new TxQueryObject(i + 1));
         }
 
-        TxResults txResults = atomicMultiThreadTxExecutor.execute(userService4, list);
+        TxResults txResults = atomicMultiThreadTxExecutor.execute(userService4, list, null);
         logger.info("successes: " + JsonUtil.bean2Json(txResults.getSuccesses()));
         logger.info("failures: " + JsonUtil.bean2Json(txResults.getFailures()));
     }
