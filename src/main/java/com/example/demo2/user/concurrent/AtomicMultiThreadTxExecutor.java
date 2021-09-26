@@ -58,6 +58,8 @@ public class AtomicMultiThreadTxExecutor<R extends TxResult, T extends TxTask, U
         List<R> failures = new ArrayList<>();
 
         for (int i = 0; i < nThreads; i++) {
+            tasks.get(i).setIndex(i);   // 初始化任务序号
+
             int endIndex = (i + 1) * nTasksPerThread;
             List<T> subTasks = tasks.subList(i * nTasksPerThread, Math.min(endIndex, nTasks));
             TxWorker<R, T, U> txWorker = new TxWorker<>();
