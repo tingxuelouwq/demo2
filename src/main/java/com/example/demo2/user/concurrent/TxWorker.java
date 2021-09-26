@@ -109,7 +109,7 @@ public class TxWorker<R extends TxResult, T extends TxTask, U> implements Runnab
         this.transactionManager = transactionManager;
     }
 
-    public void setTxService(TxService txService) {
+    public void setTxService(TxService<R, T, U> txService) {
         this.txService = txService;
     }
 
