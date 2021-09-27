@@ -2,6 +2,7 @@ package com.example.demo2.util;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class DateTimeUtil {
 
@@ -10,17 +11,40 @@ public class DateTimeUtil {
 
     private DateTimeUtil() {}
 
+    public static void main(String[] args) {
+        String createDateTime = "2021-09-23 20:27:45";
+        LocalDateTime dateTime = string2DateTime(createDateTime);
+        ZonedDateTime local = ZonedDateTime.of(dateTime, ZoneId.systemDefault());
+        System.out.println("local:" + local);
+        System.out.println("local timestamp:" + local.toInstant().toEpochMilli());
+        ZonedDateTime zone = transform(local, ZoneId.of("Z"));
+        System.out.println("zone:" + zone);
+        System.out.println("zone timestamp:" + zone.toInstant().getEpochSecond());
+        System.out.println(msec2ZonedDateTime(1632752137545L));
+    }
+
+    public static LocalDateTime local2UTC(LocalDateTime time) {
+        ZonedDateTime local = ZonedDateTime.of(time, ZoneId.systemDefault());
+        return transform(local, ZoneId.of("Z")).toLocalDateTime();
+    }
+
+    public static long local2UTCLong(LocalDateTime time) {
+        ZonedDateTime local = ZonedDateTime.of(time, ZoneId.systemDefault());
+        return transform(local, ZoneId.of("Z")).toInstant().toEpochMilli();
+    }
+
+    public static ZonedDateTime transform(ZonedDateTime zonedDateTime, ZoneId zone){
+        Objects.requireNonNull(zonedDateTime, "zonedDateTime");
+        Objects.requireNonNull(zone, "zone");
+        return zonedDateTime.withZoneSameInstant(zone);
+    }
+
     public static String getCurrentDate() {
         return DEFAULT_DATE_FORMATTER.format(LocalDate.now());
     }
 
     public static String getCurrentDate(DateTimePattern pattern) {
         return pattern.formatter.format(LocalDate.now());
-    }
-
-    public static void main(String[] args) {
-        System.out.println(msec2DateTime(1556755201000L));
-        System.out.println(DateTimeUtil.dateTime2String(DateTimeUtil.msec2DateTime(1556755201000L), DateTimeUtil.DateTimePattern.DATE_LINE));
     }
 
     public static String getCurrentTime() {
@@ -43,6 +67,11 @@ public class DateTimeUtil {
     public static LocalDateTime msec2DateTime(long epochMilli) {
         Instant instant = Instant.ofEpochMilli(epochMilli);
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    public static ZonedDateTime msec2ZonedDateTime(long epochMilli) {
+        Instant instant = Instant.ofEpochMilli(epochMilli);
+        return ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
 
     public static LocalDateTime string2DateTime(String timeStr) {

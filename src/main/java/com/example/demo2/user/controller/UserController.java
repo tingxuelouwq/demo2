@@ -10,7 +10,6 @@ import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
 import com.example.demo2.user.service.UserService;
 import com.example.demo2.user.service.impl.UserService4Impl;
-import com.example.demo2.util.DateTimeUtil;
 import com.example.demo2.util.JsonUtil;
 import com.example.demo2.util.RedisUtil;
 import org.slf4j.Logger;
@@ -22,9 +21,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo2.util.DateTimeUtil.*;
+import static com.example.demo2.util.DateTimeUtil.DateTimePattern.DATE_LINE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -50,7 +52,7 @@ public class UserController {
 
     @PostMapping("/add")
     public void add(@RequestParam Long regtime) {
-        userService.add(DateTimeUtil.msec2DateTime(regtime));
+        userService.add(msec2DateTime(regtime));
     }
 
     @PostMapping("/add2")
@@ -166,5 +168,14 @@ public class UserController {
     @GetMapping("/tx2")
     public void testTx2() {
         userService.tx2();
+    }
+
+    @GetMapping("/time")
+    public void time() {
+        long gmtTime = 1632723337545L;
+        logger.info("origin:" + msec2DateTime(gmtTime));
+
+        logger.info(dateTime2String(transform(msec2ZonedDateTime(gmtTime), ZoneId.of("UTC+8")).toLocalDateTime()));
+        logger.info(dateTime2String(transform(msec2ZonedDateTime(gmtTime), ZoneId.of("UTC+8")).toLocalDateTime(), DATE_LINE));
     }
 }
