@@ -162,4 +162,9 @@ public class UserController {
         logger.info("successes: " + JsonUtil.bean2Json(txResults.getSuccesses()));
         logger.info("failures: " + JsonUtil.bean2Json(txResults.getFailures()));
     }
+
+    @GetMapping("/tx2")
+    public void testTx2() {
+        userService.tx2();
+    }
 }

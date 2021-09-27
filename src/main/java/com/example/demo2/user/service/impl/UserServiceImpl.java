@@ -2,6 +2,7 @@ package com.example.demo2.user.service.impl;
 
 import com.example.demo2.user.entity.User;
 import com.example.demo2.user.repository.UserRepository;
+import com.example.demo2.user.service.User2Service;
 import com.example.demo2.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,22 @@ public class UserServiceImpl implements UserService {
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
                 transactionManager.rollback(status);
+            }
+        });
+    }
+
+    @Autowired
+    private User2Service user2Service;
+
+    @Override
+    public void tx2() {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+        list.parallelStream().forEach(id -> {
+            try {
+                user2Service.tx2(id);
+            } catch (Exception ex) {
+                logger.error("id=" + id, ex);
             }
         });
     }

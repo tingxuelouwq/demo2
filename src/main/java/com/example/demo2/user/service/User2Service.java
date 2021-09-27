@@ -7,4 +7,6 @@ package com.example.demo2.user.service;
 public interface User2Service {
 
     void test2() throws InterruptedException;
+
+    void tx2(Integer id);
 }

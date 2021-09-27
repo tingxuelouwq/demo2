@@ -20,4 +20,6 @@ public interface UserService {
     void update2(int id);
 
     void tx();
+
+    void tx2();
 }
