@@ -20,7 +20,11 @@ logging:
   level:
     root:                      INFO
     org.hibernate.SQL:         INFO
-#    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org:
+      springframework:
+        data:
+          redis:
+            core:             DEBUG
 
 properties:
   dt:

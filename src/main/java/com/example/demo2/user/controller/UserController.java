@@ -178,4 +178,27 @@ public class UserController {
         logger.info(dateTime2String(transform(msec2ZonedDateTime(gmtTime), ZoneId.of("UTC+8")).toLocalDateTime()));
         logger.info(dateTime2String(transform(msec2ZonedDateTime(gmtTime), ZoneId.of("UTC+8")).toLocalDateTime(), DATE_LINE));
     }
+
+    @GetMapping("/redis-tx")
+    public void redisTx() {
+        userService.redisTx();
+    }
+
+    @GetMapping("/redis-tx2")
+    public void redisTx2() {
+        userService.redisTx2();
+    }
+
+    @GetMapping("/test123")
+    public void test1233() {
+        try {
+            throw new RuntimeException("接口调用失败");
+        } catch (Exception ex) {
+            String errMsg = ex.getMessage();
+            if (ex instanceof RuntimeException) {
+                errMsg = ((RuntimeException) ex).getMessage();
+            }
+            logger.error("出库到报刊失败, errMsg: {}", errMsg, ex);
+        }
+    }
 }

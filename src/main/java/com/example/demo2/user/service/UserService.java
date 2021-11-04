@@ -22,4 +22,8 @@ public interface UserService {
     void tx();
 
     void tx2();
+
+    void redisTx();
+
+    void redisTx2();
 }

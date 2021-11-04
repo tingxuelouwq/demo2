@@ -6,6 +6,7 @@ import com.example.demo2.user.service.User2Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,12 +36,23 @@ public class User2ServiceImpl implements User2Service {
     @Override
     public void tx2(Integer id) {
         User user = userRepository.getOne(id);
-        user.setUname("tom");
+        user.setUname("tomxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         userRepository.save(user);
 
         if (id == 4 || id == 5) {
-            throw new RuntimeException();
+//            throw new RuntimeException();
         }
 
+    }
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Transactional
+    @Override
+    public void redisTx2() {
+        String key = "name";
+        String name = redisTemplate.opsForValue().get(key);
+        logger.info("yes name=" + name);
     }
 }

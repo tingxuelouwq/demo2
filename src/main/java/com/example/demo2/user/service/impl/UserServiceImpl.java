@@ -7,6 +7,10 @@ import com.example.demo2.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -106,5 +110,54 @@ public class UserServiceImpl implements UserService {
                 logger.error("id=" + id, ex);
             }
         });
+    }
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Override
+    public void redisTx() {
+        String key = "name";
+
+//        String name = redisTemplate.opsForValue().get(key);
+//        logger.info("name=" + name);
+
+//        redisTemplate.setEnableTransactionSupport(true);
+//        redisTemplate.multi();
+//        redisTemplate.opsForValue().set("pipe:0", "0");
+//        redisTemplate.opsForValue().set("pipe:1", "1");
+//        redisTemplate.opsForValue().set("pipe:2", "2");
+//        System.out.println(redisTemplate.exec());
+
+        SessionCallback<Object> callback = new SessionCallback<Object>() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                operations.opsForValue().set("pipe:0", "0");
+                operations.opsForValue().set("pipe:1", "1");
+                operations.opsForValue().set("pipe:2", "2");
+//                int i = 1 / 0;
+                return operations.exec();
+            }
+        };
+
+        System.out.println(redisTemplate.execute(callback));
+    }
+
+    @Override
+    public void redisTx2() {
+        String key = "name";
+
+        String name = redisTemplate.opsForValue().get(key);
+        logger.info("name=" + name);
+
+        user2Service.redisTx2();
+    }
+
+    private void doTest() throws Exception {
+        User user = userRepository.getOne(1);
+        user.setUname("xxxx");
+        userRepository.save(user);
+        throw new Exception();
     }
 }
