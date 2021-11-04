@@ -1,7 +1,5 @@
 package com.example.demo2.user.atomic;
 
-import javafx.concurrent.WorkerStateEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,14 +22,10 @@ public class Boss  extends Thread {
 
     public void end(Worker worker) {
         if (worker.getResult() == Result.FAILED) {
-            cancel(worker);
-        }
-    }
-
-    private void cancel(Worker worker) {
-        for (Worker w : workers) {
-            if (w != worker) {
-                w.cancel();
+            for (Worker w : workers) {
+                if (w != worker) {
+                    w.cancel();
+                }
             }
         }
     }
