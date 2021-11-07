@@ -156,8 +156,8 @@ public class UserController {
     @GetMapping("/atomic-mutli-tx")
     public void testAtomicMultiTx() {
         List<TxQueryObject> list = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            list.add(new TxQueryObject(i + 1));
+        for (int i = 1; i <= 12; i++) {
+            list.add(new TxQueryObject(i));
         }
 
         TxResults txResults = atomicMultiThreadTxExecutor.execute(userService4, list, null);

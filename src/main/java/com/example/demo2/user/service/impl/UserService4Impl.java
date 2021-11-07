@@ -31,7 +31,7 @@ public class UserService4Impl implements TxService<TxResult, TxQueryObject, Obje
         userRepository.save(user);
 
         if (id == 4 || id == 5) {
-            txResult.setMessage(id + " error happened");
+            txResult.setMessage("id=" + id + "发生错误");
             txResult.setError(true);
             throw new RuntimeException(txResult.getMessage());
         }

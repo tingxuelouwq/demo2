@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
-@SpringBootApplication(scanBasePackages = {"org.xinhua.cbcloud", "com.example.demo2"})
+@SpringBootApplication(scanBasePackages = {"com.example.demo2"})
 @EnableAsync
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class Demo2Application {
