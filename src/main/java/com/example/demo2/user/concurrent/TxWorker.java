@@ -82,7 +82,7 @@ public class TxWorker<R extends TxResult, T extends TxTask, U> implements Runnab
         try {
             rollbackLatch.await();
         } catch (InterruptedException e) {
-            logger.error("子线程调用await，等待主线程唤醒子线程时出现异常，部分回滚");
+            logger.error("子线程调用await，等待主线程唤醒子线程时出现异常，整体回滚");
             rollbackFlag.set(true);
         }
 

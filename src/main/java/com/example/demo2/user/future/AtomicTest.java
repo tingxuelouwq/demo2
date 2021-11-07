@@ -6,7 +6,7 @@ import java.io.IOException;
  * kevin<br/>
  * 2021/11/4 14:19<br/>
  */
-public class AtmoicTest {
+public class AtomicTest {
 
     public static void main(String[] args) throws IOException {
         Boss boss = new Boss();
