@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface NineRepository extends JpaRepository<NineEntity, Long> {
 
-//    @Modifying
-//    @Query(nativeQuery = true, value = "delete from nine_tb where docId=?1")
+    @Modifying
+    @Query("delete from NineEntity where docId=?1")
     int deleteByDocId(String docId);
 
     @Query(nativeQuery = true, value = "select * from nine_tb where docId=?1")
