@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public interface UserRepository extends JpaRepository<User, Integer > {
 
-    Optional<User> getById(Integer id);
+    User getById(Integer id);
 
     List<User> findAllByAgeAfter(Integer age);
 
